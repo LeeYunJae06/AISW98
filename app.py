@@ -2,10 +2,8 @@ import streamlit as st
 from openai import OpenAI
 
 # -----------------------------
-# OpenAI API 키 직접 입력
+# OpenAI API 키 설정
 # -----------------------------
-# 여기에 본인의 API 키를 입력
-
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # -----------------------------
@@ -46,18 +44,17 @@ if st.button("추천 받기"):
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "당신은 루틴 추천 전문가입니다."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ],
             max_tokens=500
         )
 
-        # 최신 SDK 방식
-        result = response.choices[0].message.content
+        # 최신 SDK: message["content"] 로 접근
+        result = response.choices[0].message["content"]
         st.success(result)
 
     except Exception as e:
         st.error(f"추천 루틴 생성 중 오류 발생: {e}")
-        result = ""
 
 # -----------------------------
 # 하루 회고
@@ -80,8 +77,8 @@ if today_feedback:
     feedback_prompt = f"""
     사용자가 작성한 회고: {today_feedback}
 
-    1) 오늘 잘한 점  
-    2) 개선할 점  
+    1) 오늘 잘한 점
+    2) 개선할 점
     3) 내일 적용 가능한 시간대별 루틴
 
     위 내용을 정리해서 출력하세요.
@@ -90,13 +87,16 @@ if today_feedback:
     try:
         feedback_response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": feedback_prompt}],
+            messages=[
+                {"role": "user", "content": feedback_prompt}
+            ],
             max_tokens=400
         )
 
-        # 최신 SDK 방식
-        feedback_result = feedback_response.choices[0].message.content
+        feedback_result = feedback_response.choices[0].message["content"]
         st.info(feedback_result)
 
     except Exception as e:
         st.error(f"AI 피드백 생성 중 오류 발생: {e}")
+
+

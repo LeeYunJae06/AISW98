@@ -49,8 +49,8 @@ if st.button("추천 받기"):
             max_tokens=500
         )
 
-        # 최신 SDK: message["content"] 로 접근
-        result = response.choices[0].message["content"]
+        # 최신 SDK 방식: message.content
+        result = response.choices[0].message.content
         st.success(result)
 
     except Exception as e:
@@ -93,10 +93,12 @@ if today_feedback:
             max_tokens=400
         )
 
-        feedback_result = feedback_response.choices[0].message["content"]
+        # 최신 방식
+        feedback_result = feedback_response.choices[0].message.content
         st.info(feedback_result)
 
     except Exception as e:
         st.error(f"AI 피드백 생성 중 오류 발생: {e}")
+
 
 
